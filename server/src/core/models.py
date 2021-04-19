@@ -30,14 +30,21 @@ class Instructor(models.Model):
     #courseID = models.ForeignKey(Courses, on_delete=models.CASCADE)
 
     name = models.CharField(max_length=200)
-    email = models.EmailField(max_length=100)
+    email = models.EmailField(max_length=200)
     description = models.TextField() # Will this be CharField or TextField is fine?
     
+class Student(models.Model):
+    name = models.CharField(max_length=200)
+    email = models.EmailField(max_length=200)
+    contactNumber = models.CharField(max_length=50)
+    Batch = models.PositiveSmallIntegerField()
+    Major = models.CharField(max_length=100)
+    Minor = models.CharField(max_length=100)
 
 class Instructor_Review(models.Model):
     # null is set to trutemporarily
     instructorID = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True)
-    #studentID = models.ForeignKey(Student, on_delete=models.CASCADE)
+    studentID = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     courseID = models.ForeignKey(Courses, on_delete=models.CASCADE, null=True)
 
     rating = models.PositiveSmallIntegerField(validators = [MaxValueValidator(5)])

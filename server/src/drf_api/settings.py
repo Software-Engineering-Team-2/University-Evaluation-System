@@ -23,6 +23,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+SECRET_KEY = '42rh@_1my$e%m-tqkz8$16bnxff_i6uo33*d7xt_2lu5=04b6r' # Its giving me an error if I don't add this
+
 ALLOWED_HOSTS = []
 
 

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Post, Courses
+from .models import Post, Courses, Instructor_Review
 
 class PostSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,4 +13,11 @@ class CourseSerializer(serializers.ModelSerializer):
         model = Courses
         fields = (
             'id', 'title', 'description', 'school'
+        )
+
+class InstructorReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instructor_Review
+        fields = (
+            'instructorID', 'courseID', 'rating', 'comments','verified','anonymous','timeStamp'
         )

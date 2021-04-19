@@ -45,7 +45,7 @@ class Instructor_Review(models.Model):
     # null is set to trutemporarily
     instructorID = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True)
     studentID = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
-    courseID = models.ForeignKey(Courses, on_delete=models.CASCADE, null=True)
+    #courseID = models.ForeignKey(Courses, on_delete=models.CASCADE, null=True)
 
     rating = models.PositiveSmallIntegerField(validators = [MaxValueValidator(5)])
     comments = models.TextField() # Will Specify max_length maybe later..

@@ -41,14 +41,16 @@ class getCourses(APIView):
 
 
 class getInstructorReviews(APIView):
-    # def get(self, request, *args, **kwargs):
-    #     title = request.GET['title']
-    #     if(title != ''):
-    #         qs = Courses.objects.all().filter(title__contains=title)
-    #     else:
-    #         qs = Courses.objects.all()
-    #     serializer = CourseSerializer(qs, many=True)
-    #     return Response(serializer.data)
+
+    def get(self, request, *args, **kwargs):
+        print("request.data:",request.data)
+        if('instructorID' in request.GET):
+            instructorID = request.GET['instructorID']
+            qs = Instructor_Review.objects.all().filter(instructorID__exact=instructorID)
+        else:
+            qs = Instructor_Review.objects.all()
+        serializer = InstructorReviewSerializer(qs, many=True)
+        return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
         print(request.data)
@@ -56,4 +58,5 @@ class getInstructorReviews(APIView):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors)
+        else:
+            return Response(serializer.errors)

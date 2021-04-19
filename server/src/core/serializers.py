@@ -19,5 +19,5 @@ class InstructorReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructor_Review
         fields = (
-            'instructorID', 'courseID', 'rating', 'comments','verified','anonymous','timeStamp'
+            'instructorID', 'rating', 'comments','verified','anonymous','timeStamp'
         )

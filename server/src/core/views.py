@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .serializers import PostSerializer, CourseSerializer, InstructorReviewSerializer
-from .models import Post, Courses, Instructor_Review
+from .models import Post, Courses, Instructor_Review, Course_Review
 
 class TestView(APIView):
     def get(self, request, *args, **kwargs):

@@ -53,3 +53,23 @@ class Instructor_Review(models.Model):
     anonymous = models.BooleanField(default = True)
     timeStamp = models.DateTimeField(auto_now_add=True)
 
+
+class Semester(models.Model):
+    year = models.PositiveSmallIntegerField()
+    season = models.CharField(max_length=50) # Might add validators later
+
+class Course_Semester(models.Model):
+    courseID = models.ForeignKey(Courses, on_delete=models.CASCADE)
+    semesterID = models.ForeignKey(Semester, on_delete=models.CASCADE)
+
+class Course_Review(models.Model):
+    # null is set to trutemporarily
+    courseSemesterID = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    studentID = models.ForeignKey(Student, on_delete=models.CASCADE)
+
+    rating = models.PositiveSmallIntegerField(validators = [MaxValueValidator(5)])
+    comments = models.TextField() # Will Specify max_length maybe later..
+    verified = models.BooleanField(default = False)
+    anonymous = models.BooleanField(default = True)
+    timeStamp = models.DateTimeField(auto_now_add=True)
+

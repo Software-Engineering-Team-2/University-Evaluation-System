@@ -4,8 +4,8 @@ from django.http import JsonResponse # Abbas: Is this being used?
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import CourseSerializer, InstructorReviewSerializer,InstructorSerializer, CourseReviewSerializer
-from .models import Course, Instructor_Review, Course_Review, Instructor
+from .serializers import CourseSerializer, InstructorReviewSerializer,InstructorSerializer, CourseReviewSerializer, CourseReviewTagSerializer
+from .models import Course, Instructor_Review, Course_Review, Instructor, Course_Review_Tag
 
 
 class getCourses(APIView):
@@ -109,6 +109,25 @@ class getInstructorReviews(APIView):
     def post(self, request, *args, **kwargs):
         print(request.data)
         serializer = InstructorReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
+
+class CourseReviewTagView(APIView):
+
+    def get(self, request, *args, **kwargs):
+
+        ID = request.GET['courseReviewID']
+        qs = Course_Review_Tag.objects.all().filter(courseReviewID__exact= ID)
+        serializer = CourseReviewTagSerializer(qs, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        print("request.data:",request.data)
+        serializer = CourseReviewTagSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)

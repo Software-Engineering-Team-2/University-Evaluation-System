@@ -73,16 +73,19 @@ class Course_Review(models.Model):
     votes = models.IntegerField(default=0)
     timeStamp = models.DateTimeField(auto_now_add=True)
 
-class Tag(models.Model):
+class Course_Tag(models.Model):
     name = models.CharField(max_length=100)
 
 class Course_Review_Tag(models.Model):
     courseReviewID = models.ForeignKey(Course_Review, on_delete=models.CASCADE)
-    tagID = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    tagID = models.ForeignKey(Course_Tag, on_delete=models.CASCADE)
+
+class Instructor_Tag(models.Model):
+    name = models.CharField(max_length=100)
 
 class Instructor_Review_Tag(models.Model):
     instructorReviewID = models.ForeignKey(Instructor_Review, on_delete=models.CASCADE)
-    tagID = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    tagID = models.ForeignKey(Instructor_Tag, on_delete=models.CASCADE)
 
 
 

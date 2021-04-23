@@ -3,11 +3,11 @@ from django.urls import path, re_path
 from django.urls import include, path
 from rest_auth.registration.views import VerifyEmailView, RegisterView
 from allauth.account.views import ConfirmEmailView
-from core.views import getCourses, getInstructor, getInstructorReviews, getCourseReviews
+from core.views import getCourses, getInstructor, getInstructorReviews, getCourseReviews, CourseReviewTagView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('testgetInstructorReviews/', getInstructorReviews.as_view(), name="testgetInstructorReviews"),
+    path('testView/', CourseReviewTagView.as_view(), name="CourseReviewTagView"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
     path(

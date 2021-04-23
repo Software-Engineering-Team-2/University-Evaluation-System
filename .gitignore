@@ -37,6 +37,7 @@ venv.bak/
 __pycache__
 db.sqlite3
 media
+**/migrations/**
 
 # Backup files # 
 *.bak 

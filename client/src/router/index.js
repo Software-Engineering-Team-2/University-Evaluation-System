@@ -2,7 +2,8 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Login from '@/components/HelloWorld'
 import Dashboard from '@/components/Dashboard'
-import Course_Profile from '@/components/Course_Profile'
+import courseProfile from '@/components/courseProfile'
+import instructorProfile from '@/components/instructorProfile'
 import store from '@/store'
 
 Vue.use(VueRouter)
@@ -28,9 +29,14 @@ const routes = [
     },
   },
   {
-    path: '/course',
+    path: '/course/:id',
     name: 'Course',
-    component: Course_Profile
+    component: courseProfile
+  },
+  {
+    path: '/instructor/:id',
+    name: 'Instructor',
+    component: instructorProfile
   },
 ]
 

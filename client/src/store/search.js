@@ -5,7 +5,6 @@ export default {
     state: {
         // token: null,
         // user: null,
-        search_results: null
     },
     getters: {
         // isAuthenticated (state) {
@@ -24,8 +23,14 @@ export default {
         // }
     },
     actions: {
-        async search (_, request) {
-            let response = await axios.get("http://127.0.0.1:8000/get-courses", {params: request}).catch(error => {
+        async courseSearch (_, request) {
+            let response = await axios.get("/get-courses", {params: request}).catch(error => {
+                console.log(error)
+            })
+            return response.data
+        },
+        async instructorSearch (_, request) {
+            let response = await axios.get("/get-instructor", {params: request}).catch(error => {
                 console.log(error)
             })
             return response.data

@@ -44,7 +44,7 @@ class Student(models.Model):
 class Instructor_Review(models.Model):
     # null is set to trutemporarily
     instructorID = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True)
-    studentID = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
+    # studentID = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     #courseID = models.ForeignKey(Courses, on_delete=models.CASCADE, null=True)
 
     rating = models.PositiveSmallIntegerField(validators = [MaxValueValidator(5)])
@@ -63,14 +63,14 @@ class Course_Semester(models.Model):
     semesterID = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
 class Course_Review(models.Model):
-    # null is set to trutemporarily
-    courseSemesterID = models.ForeignKey(Course_Semester, on_delete=models.CASCADE)
-    studentID = models.ForeignKey(Student, on_delete=models.CASCADE)
+    courseSemesterID = models.ForeignKey(Courses, on_delete=models.CASCADE)
+    # studentID = models.ForeignKey(Student, on_delete=models.CASCADE)
 
-    rating = models.PositiveSmallIntegerField(validators = [MaxValueValidator(5)])
+    rating = models.FloatField(validators = [MaxValueValidator(5)])
     comments = models.TextField() # Will Specify max_length maybe later..
     verified = models.BooleanField(default = False)
     anonymous = models.BooleanField(default = True)
+    votes = models.IntegerField(default=0)
     timeStamp = models.DateTimeField(auto_now_add=True)
 
 
@@ -85,4 +85,6 @@ class Instructor_Review_Tags(models.Model):
 
 class Tags(models.Model):
     name = models.CharField(max_length=100)
+
+    
 

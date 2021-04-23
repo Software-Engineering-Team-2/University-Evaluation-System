@@ -3,7 +3,7 @@
     <v-row align="center" justify="center">
       <v-col align="center" justify="center">
         <v-card outlined elevation="5" shaped max-width="400" class="pa-9">
-          <v-img contain height="100" src="@/assets/hu-logo.jpeg"></v-img>
+          <v-img contain height="100" src="@/assets/hu-logo.png"></v-img>
           <v-col
             ><v-tabs fixed-tabs class="mt-4" v-model="tab">
               <v-tab> Login </v-tab>

@@ -5,19 +5,19 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .serializers import CourseSerializer, InstructorReviewSerializer,InstructorSerializer, CourseReviewSerializer
-from .models import Courses, Instructor_Review, Course_Review, Instructor
+from .models import Course, Instructor_Review, Course_Review, Instructor
 
 
 class getCourses(APIView):
     def get(self, request, *args, **kwargs):
         if ('title' in request.GET):
             query = request.GET['title']
-            qs = Courses.objects.all().filter(title__contains=query)
+            qs = Course.objects.all().filter(title__contains=query)
         elif ('id' in request.GET):
             query = request.GET['id']
-            qs = Courses.objects.all().filter(id=query)
+            qs = Course.objects.all().filter(id=query)
         else:
-            qs = Courses.objects.all()
+            qs = Course.objects.all()
         serializer = CourseSerializer(qs, many=True)
         return Response(serializer.data)
 

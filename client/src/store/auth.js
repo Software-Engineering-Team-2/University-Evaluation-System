@@ -24,7 +24,7 @@ export default {
     },
     actions: {
         async signIn({ dispatch }, credentials) {
-            let response = await axios.post('http://127.0.0.1:8000/dj-rest-auth/login/', credentials).catch(error => {console.log(error)})
+            let response = await axios.post('/dj-rest-auth/login/', credentials).catch(error => {console.log(error)})
             return dispatch('attempt', response.data.key)
         },
         async attempt ({ commit, state }, token) {
@@ -37,7 +37,7 @@ export default {
             }
 
             try {
-                let response = await axios.get('http://127.0.0.1:8000/dj-rest-auth/user/')
+                let response = await axios.get('/dj-rest-auth/user/')
                 commit('SET_USER', response.data)
             } catch (e) {
                 commit('SET_TOKEN', null)
@@ -45,14 +45,14 @@ export default {
             }
         },
         signOut ({ commit }) {
-            return axios.post('http://127.0.0.1:8000/dj-rest-auth/logout/').then(() => {
+            return axios.post('/dj-rest-auth/logout/').then(() => {
                 commit('SET_TOKEN', null)
                 commit('SET_USER', null)
             })
         },
         register (_, data) {
             console.log(data)
-            return axios.post('http://127.0.0.1:8000/dj-rest-auth/registration/', data).catch((e) => {
+            return axios.post('/dj-rest-auth/registration/', data).catch((e) => {
                 console.log(e)
             })  
         }

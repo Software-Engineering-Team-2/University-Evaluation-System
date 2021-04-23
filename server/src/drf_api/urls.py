@@ -3,7 +3,7 @@ from django.urls import path, re_path
 from django.urls import include, path
 from rest_auth.registration.views import VerifyEmailView, RegisterView
 from allauth.account.views import ConfirmEmailView
-from core.views import getCourses
+from core.views import getCourses, getInstructor, getInstructorReviews, getCourseReviews
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +23,10 @@ urlpatterns = [
     
     # path('rest-auth/', include('rest_auth.urls')),
     path('get-courses', getCourses.as_view(), name='test'),
+    path('get-instructor', getInstructor.as_view(), name='test-Instructor'),
+    path('get-instructor-rev', getInstructorReviews.as_view(), name='test-Instructor-Rev'),
+    path('get-course-rev', getCourseReviews.as_view(), name='test-Course-Rev'),
+
     # path(
     #     'rest-auth/registration/account-confirm-email/<str:key>/',
     #     ConfirmEmailView.as_view(),

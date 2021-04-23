@@ -64,7 +64,7 @@ class Course_Semester(models.Model):
 
 class Course_Review(models.Model):
     # null is set to trutemporarily
-    courseSemesterID = models.ForeignKey(Instructor, on_delete=models.CASCADE)
+    courseSemesterID = models.ForeignKey(Course_Semester, on_delete=models.CASCADE)
     studentID = models.ForeignKey(Student, on_delete=models.CASCADE)
 
     rating = models.PositiveSmallIntegerField(validators = [MaxValueValidator(5)])
@@ -72,4 +72,17 @@ class Course_Review(models.Model):
     verified = models.BooleanField(default = False)
     anonymous = models.BooleanField(default = True)
     timeStamp = models.DateTimeField(auto_now_add=True)
+
+
+class Course_Review_Tags(models.Model):
+    courseReviewID = models.ForeignKey(Course_Review, on_delete=models.CASCADE)
+    tagID = models.ForeignKey(Tags, on_delete=models.CASCADE)
+
+
+class Instructor_Review_Tags(models.Model):
+    instructorReviewID = models.ForeignKey(Instructor_Review, on_delete=models.CASCADE)
+    tagID = models.ForeignKey(Tags, on_delete=models.CASCADE)
+
+class Tags(models.Model):
+    name = models.CharField(max_length=100)
 

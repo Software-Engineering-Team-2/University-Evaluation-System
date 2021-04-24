@@ -28,12 +28,12 @@ class CourseReviewSerializer(serializers.ModelSerializer):
             'id', 'courseSemesterID', 'rating', 'comments','verified','anonymous','timeStamp', 'votes'
         )
 
-# class CourseTagSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Tag
-#         fields = (
-#             'courseReviewID', 'tagName'
-#         )
+class InstructorReviewTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instructor_Review_Tag
+        fields = (
+            'instructorReviewID', 'tagID'
+        )
 
 class CourseReviewTagSerializer(serializers.ModelSerializer):
     class Meta:

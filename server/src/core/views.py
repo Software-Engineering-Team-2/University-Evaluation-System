@@ -4,20 +4,20 @@ from django.http import JsonResponse # Abbas: Is this being used?
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import CourseSerializer, InstructorReviewSerializer,InstructorSerializer, CourseReviewSerializer, VoteSerializer
-from .models import Courses, Instructor_Review, Course_Review, Instructor, Vote
+from .serializers import *
+from .models import *
 
 
 class getCourses(APIView):
     def get(self, request, *args, **kwargs):
         if ('title' in request.GET):
             query = request.GET['title']
-            qs = Courses.objects.all().filter(title__contains=query)
+            qs = Course.objects.all().filter(title__contains=query)
         elif ('id' in request.GET):
             query = request.GET['id']
-            qs = Courses.objects.all().filter(id=query)
+            qs = Course.objects.all().filter(id=query)
         else:
-            qs = Courses.objects.all()
+            qs = Course.objects.all()
         serializer = CourseSerializer(qs, many=True)
         return Response(serializer.data)
 
@@ -111,3 +111,60 @@ class getCourseReviews(APIView):
         return Response(serializer.data)
 
     
+class getInstructorReviews(APIView):
+
+    def get(self, request, *args, **kwargs):
+        print("request.data:",request.data)
+        if('instructorID' in request.GET):
+            instructorID = request.GET['instructorID']
+            qs = Instructor_Review.objects.all().filter(instructorID__exact=instructorID)
+        else:
+            qs = Instructor_Review.objects.all()
+        serializer = InstructorReviewSerializer(qs, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        serializer = InstructorReviewSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
+
+class CourseReviewTagView(APIView):
+
+    def get(self, request, *args, **kwargs):
+
+        ID = request.GET['courseReviewID']
+        qs = Course_Review_Tag.objects.all().filter(courseReviewID__exact= ID)
+        serializer = CourseReviewTagSerializer(qs, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        print("request.data:",request.data)
+        serializer = CourseReviewTagSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)
+
+class InstructorReviewTagView(APIView):
+
+    def get(self, request, *args, **kwargs):
+
+        ID = request.GET['instructorReviewID']
+        qs = Instructor_Review_Tag.objects.all().filter(instructorReviewID__exact= ID)
+        serializer = InstructorReviewTagSerializer(qs, many=True)
+        return Response(serializer.data)
+
+    def post(self, request, *args, **kwargs):
+        print("request.data:",request.data)
+        serializer = InstructorReviewTagSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors)

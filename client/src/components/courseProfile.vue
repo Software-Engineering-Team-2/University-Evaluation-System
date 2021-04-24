@@ -34,11 +34,23 @@
               cols="1"
               class="d-flex flex-column justify-center align-center"
             >
-              <v-btn @click="updateVotes(review.id, review.votes, 1)" class="mx-2" icon x-large color="primary">
+              <v-btn
+                @click="updateVotes(review.id, review.votes, 1)"
+                class="mx-2"
+                icon
+                x-large
+                color="primary"
+              >
                 <v-icon class="icon-large"> mdi-arrow-up-drop-circle </v-icon>
               </v-btn>
-              <h4 class="align-center"> {{ review.votes }} </h4>
-              <v-btn @click="updateVotes(review.id, review.votes, -1)" class="mx-2" icon x-large color="primary">
+              <h4 class="align-center">{{ review.votes }}</h4>
+              <v-btn
+                @click="updateVotes(review.id, review.votes, -1)"
+                class="mx-2"
+                icon
+                x-large
+                color="primary"
+              >
                 <v-icon class="icon-large"> mdi-arrow-down-drop-circle </v-icon>
               </v-btn>
             </v-col>
@@ -148,6 +160,16 @@
 import Navigation from "@/components/Navigation";
 import { mapActions } from "vuex";
 
+function compare(a, b) {
+  if (a.votes < b.votes) {
+    return 1;
+  }
+  if (a.votes > b.votes) {
+    return -1;
+  }
+  return 0;
+}
+
 export default {
   data() {
     return {
@@ -175,7 +197,7 @@ export default {
       searchResults: "search/courseSearch",
       fetchCourseReviews: "courses/fetchCourseReviews",
       postCourseReviews: "courses/postCourseReviews",
-      updateVotesAPI: "courses/updateVotes"
+      updateVotesAPI: "courses/updateVotes",
     }),
     async queryCourse(value) {
       await this.searchResults(value).then((response) => {
@@ -186,6 +208,7 @@ export default {
     getCourseReviews(value) {
       this.fetchCourseReviews(value).then((response) => {
         this.courseReviews = response;
+        this.courseReviews.sort( compare )
       });
     },
     submitReview() {
@@ -198,11 +221,11 @@ export default {
         };
       });
     },
-    updateVotes (id, votes, val) {
-      this.updateVotesAPI({id: id, votes: votes+val}).then((response) => {
-        console.log(response)
-      })
-    }
+    updateVotes(id, votes, val) {
+      this.updateVotesAPI({ id: id, votes: votes + val }).then(() => {
+        this.getCourseReviews({ courseSemesterID: this.course.id });
+      });
+    },
   },
 };
 </script>

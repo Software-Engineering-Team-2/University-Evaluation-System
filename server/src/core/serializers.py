@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Courses, Instructor_Review, Instructor,Course_Review
+from .models import Courses, Instructor_Review, Instructor,Course_Review, Vote
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -26,4 +26,11 @@ class CourseReviewSerializer(serializers.ModelSerializer):
         model = Course_Review
         fields = (
             'id', 'courseSemesterID', 'rating', 'comments','verified','anonymous','timeStamp', 'votes'
+        )
+
+class VoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vote
+        fields = (
+            'id', 'courseReviewID', 'userID', 'voteType' 
         )

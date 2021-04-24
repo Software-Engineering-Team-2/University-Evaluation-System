@@ -74,3 +74,7 @@ class Course_Review(models.Model):
     votes = models.IntegerField(default=0)
     timeStamp = models.DateTimeField(auto_now_add=True)
 
+class Vote(models.Model):
+    courseReviewID = models.ForeignKey(Course_Review,on_delete=models.CASCADE)
+    userID = models.ForeignKey(User,on_delete=models.CASCADE)
+    voteType = models.CharField(max_length=1, choices=[("U", "up"), ("D", 'down')])

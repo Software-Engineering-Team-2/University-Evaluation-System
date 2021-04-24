@@ -4,8 +4,8 @@ from django.http import JsonResponse # Abbas: Is this being used?
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
-from .serializers import CourseSerializer, InstructorReviewSerializer,InstructorSerializer, CourseReviewSerializer
-from .models import Courses, Instructor_Review, Course_Review, Instructor
+from .serializers import CourseSerializer, InstructorReviewSerializer,InstructorSerializer, CourseReviewSerializer, VoteSerializer
+from .models import Courses, Instructor_Review, Course_Review, Instructor, Vote
 
 
 class getCourses(APIView):
@@ -70,6 +70,15 @@ class getInstructorReviews(APIView):
 
 class getCourseReviews(APIView):
     
+    def create_vote(self, course, user, vtype):
+        vote = Vote(courseReviewID=course, userID=user, voteType=vtype)
+        if vtype == "U":
+            course.votes += 1
+        else:
+            course.votes -= 1
+        vote.save()
+        course.save()        
+
     def get(self, request, *args, **kwargs):
         CourseID = request.GET['courseSemesterID']
         qs = Course_Review.objects.all().filter(courseSemesterID__exact=CourseID)
@@ -84,11 +93,21 @@ class getCourseReviews(APIView):
         return Response(serializer.errors)
 
     def patch(self, request, *args, **kwargs):
-        print(request.data)
-        reviewId = request.data['id']
-        qs = Course_Review.objects.all().filter(id=reviewId).first()
-        serializer = CourseReviewSerializer(qs, data=request.data, partial=True) # set partial=True to update a data partially
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors)
+        id = request.data['id']
+        course = Course_Review.objects.get(id=id)
+        try:
+            vote = Vote.objects.get(courseReviewID=course, userID=request.user)
+            if(vote.voteType == "D" and 'up' in request.data):
+                vote.delete()
+                self.create_vote(course, request.user, "U")
+            elif(vote.voteType == "U" and 'up' not in request.data):
+                vote.delete()
+                self.create_vote(course, request.user, "D")
+            else:
+                return Response("You have already voted!", status=400)
+        except Vote.DoesNotExist:
+            self.create_vote(course, request.user, "U")
+        serializer = CourseReviewSerializer(course)
+        return Response(serializer.data)
+
+    

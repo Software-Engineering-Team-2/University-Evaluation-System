@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from django_und.models import Vote
 
 class CourseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,14 +26,14 @@ class CourseReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course_Review
         fields = (
-            'id', 'courseSemesterID', 'rating', 'comments','verified','anonymous','timeStamp', 'votes'
+            'id', 'courseSemesterID', 'rating', 'comments','verified','anonymous','timeStamp', 'und_score'
         )
 
 class VoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vote
         fields = (
-            'id', 'courseReviewID', 'userID', 'voteType' 
+            'user', 'score', 'object_id' 
         )
         
 class InstructorReviewTagSerializer(serializers.ModelSerializer):

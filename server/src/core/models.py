@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator
+from django_und.models import VoteMixin
 
 User = get_user_model()
 SCHOOL_TYPES = [('DSSE', 'Dhanani School of Science & Engineering'), ('AHSS', 'School of Arts, Humanities & Social Sciences')]
@@ -62,7 +63,7 @@ class Course_Semester(models.Model):
     courseID = models.ForeignKey(Course, on_delete=models.CASCADE)
     semesterID = models.ForeignKey(Semester, on_delete=models.CASCADE)
 
-class Course_Review(models.Model):
+class Course_Review(VoteMixin, models.Model):
     courseSemesterID = models.ForeignKey(Course, on_delete=models.CASCADE)
     # studentID = models.ForeignKey(Student, on_delete=models.CASCADE)
 
@@ -73,11 +74,6 @@ class Course_Review(models.Model):
     votes = models.IntegerField(default=0)
     timeStamp = models.DateTimeField(auto_now_add=True)
 
-class Vote(models.Model):
-    courseReviewID = models.ForeignKey(Course_Review,on_delete=models.CASCADE)
-    userID = models.ForeignKey(User,on_delete=models.CASCADE)
-    voteType = models.CharField(max_length=1, choices=[("U", "up"), ("D", 'down')])
-    
 class Course_Tag(models.Model):
     name = models.CharField(max_length=100)
 

@@ -1,6 +1,7 @@
 from django.contrib import admin
 
 from .models import *
+from django_und.models import Vote
 
 admin.site.register(Course)
 admin.site.register(Instructor)

@@ -7,6 +7,8 @@ from rest_framework.response import Response
 from .serializers import *
 from .models import *
 
+from django_und.models import Vote
+
 
 class getCourses(APIView):
     def get(self, request, *args, **kwargs):
@@ -70,12 +72,12 @@ class getInstructorReviews(APIView):
 
 class getCourseReviews(APIView):
     
-    def create_vote(self, course, user, vtype):
+    def create_vote(self, course, user, vtype, val):
         vote = Vote(courseReviewID=course, userID=user, voteType=vtype)
         if vtype == "U":
-            course.votes += 1
+            course.votes += val
         else:
-            course.votes -= 1
+            course.votes -= val
         vote.save()
         course.save()        
 
@@ -94,20 +96,12 @@ class getCourseReviews(APIView):
 
     def patch(self, request, *args, **kwargs):
         id = request.data['id']
-        course = Course_Review.objects.get(id=id)
-        try:
-            vote = Vote.objects.get(courseReviewID=course, userID=request.user)
-            if(vote.voteType == "D" and 'up' in request.data):
-                vote.delete()
-                self.create_vote(course, request.user, "U")
-            elif(vote.voteType == "U" and 'up' not in request.data):
-                vote.delete()
-                self.create_vote(course, request.user, "D")
-            else:
-                return Response("You have already voted!", status=400)
-        except Vote.DoesNotExist:
-            self.create_vote(course, request.user, "U")
-        serializer = CourseReviewSerializer(course)
+        courseReview = Course_Review.objects.get(id=id)
+        if (request.data['type'] == "up"):
+            courseReview.upvote(request.user)
+        else:
+            courseReview.downvote(request.user)
+        serializer = CourseReviewSerializer(courseReview)
         return Response(serializer.data)
 
     
@@ -168,3 +162,12 @@ class InstructorReviewTagView(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+
+class getCourseReviewVotes(APIView):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            vote = Vote.objects.get(user=request.user, object_id=request.data['courseReviewId'])
+            return Response(VoteSerializer(vote).data)
+        except Vote.DoesNotExist:
+            return Response({}, status=400)

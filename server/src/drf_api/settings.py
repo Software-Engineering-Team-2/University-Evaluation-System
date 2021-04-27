@@ -50,7 +50,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'core',
     'users',
-    'vote'
+    # 'vote',
+    'django_und'
 ]
 
 MIDDLEWARE = [

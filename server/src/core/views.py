@@ -168,3 +168,30 @@ class getInstructorReviewVotes(APIView):
             return Response(VoteSerializer(vote).data)
         except Vote.DoesNotExist:
             return Response({}, status=400)
+
+class getInstructorReviewTags(APIView):
+
+    def post(self, request, *args, **kwargs):
+        if ('instructorReviewId' in request.data):
+            instructorReviewTag = Instructor_Review_Tag.objects.all().filter(instructorReviewID=request.data['instructorReviewId'])
+            tags = []
+            for i in instructorReviewTag:
+                tags.append(instructorTagSerializer(i.tagID).data['name'])
+            return Response(tags, status=200)
+        else:
+            instructorTags = Instructor_Tag.objects.all()
+            return Response(instructorTagSerializer(instructorTags, many=True).data, status=200)
+    
+    def patch(self, request, *args, **kwargs):
+        instructorReview = Instructor_Review.objects.get(id=request.data['reviewId'])
+        for tag in request.data['tags']:
+            try:
+                exact = Instructor_Tag.objects.get(name=tag.lower())
+                review_tag = Instructor_Review_Tag(instructorReviewID=instructorReview, tagID=exact)
+                review_tag.save()
+            except Instructor_Tag.DoesNotExist:
+                new_tag = Instructor_Tag(name=tag.lower())
+                new_tag.save()
+                review_tag = Instructor_Review_Tag(instructorReviewID=instructorReview, tagID=new_tag)
+                review_tag.save()
+        return Response(status=200)

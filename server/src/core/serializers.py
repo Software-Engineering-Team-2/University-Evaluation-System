@@ -49,3 +49,15 @@ class CourseReviewTagSerializer(serializers.ModelSerializer):
         fields = (
             'courseReviewID', 'tagID'
         )
+
+class CourseTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course_Tag
+        fields = (
+            'name'
+        )
+
+class instructorTagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instructor_Tag
+        fields = '__all__' 

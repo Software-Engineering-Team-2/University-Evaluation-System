@@ -13,8 +13,8 @@ export default {
                 return []
         },
         async postInstructorReviews (_, request) {
-            let response = await axios.post("/get-instructor-rev", request).catch(error => {
-                console.log(error)
+            let response = await axios.post("/get-instructor-rev", request['review']).then(async (r) => {
+                return await axios.patch('get-instructor-rev-tags', {tags: request['tags'], reviewId: r.data['id']})
             })
             return response.data
         },
@@ -27,6 +27,13 @@ export default {
 
         async getInstructorReviewVotes(_, request) {
             let response = await axios.post('get-instructor-rev-votes', request).catch(error => {
+                console.log(error)
+            })
+            return response.data
+        },
+
+        async getInstructorReviewTags(_, request) {
+            let response = await axios.post('get-instructor-rev-tags', request).catch(error => {
                 console.log(error)
             })
             return response.data

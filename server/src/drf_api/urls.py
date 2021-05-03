@@ -20,26 +20,11 @@ urlpatterns = [
         VerifyEmailView.as_view(),
         name='account_email_verification_sent'
     ),
-    
-    
-    # path('rest-auth/', include('rest_auth.urls')),
     path('get-courses', getCourses.as_view(), name='test'),
     path('get-instructor', getInstructor.as_view(), name='test-Instructor'),
     path('get-instructor-rev', getInstructorReviews.as_view(), name='test-Instructor-Rev'),
     path('get-course-rev', getCourseReviews.as_view(), name='test-Course-Rev'),
     path('get-course-rev-votes', getCourseReviewVotes.as_view(), name='test-Course-Rev-votes'),
     path('get-instructor-rev-votes', getInstructorReviewVotes.as_view(), name='test-Course-Rev-votes'),
-    # path('get-course-rev/up/<int:id>', upvote, name='test-Course-Rev'),
-    # path('get-course-rev/down', downvote, name='test-Course-Rev'),
-    # path(
-    #     'rest-auth/registration/account-confirm-email/<str:key>/',
-    #     ConfirmEmailView.as_view(),
-    # ),
-    # re_path(
-    #     r'rest-auth/registration/account-confirm-email/(?P<key>.+)/',
-    #     VerifyEmailView.as_view(),
-    #     name='account_email_verification_sent'
-    # ),
-    # re_path(r'rest-auth/registration/account-confirm-email/(?P<key>.+)/', VerifyEmailView.as_view(), name='account_confirm_email'),
-    # path('rest-auth/registration/', include('rest_auth.registration.urls')),
+    path('get-instructor-rev-tags', getInstructorReviewTags.as_view(), name='test-Course-Rev-tags'),
 ]

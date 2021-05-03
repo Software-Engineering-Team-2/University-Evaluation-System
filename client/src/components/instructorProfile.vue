@@ -39,11 +39,24 @@
             <v-col
               cols="1"
               class="d-flex flex-column justify-center align-center"
-              ><v-btn class="mx-2" icon x-large color="primary">
+            >
+              <v-btn
+                @click="updateVotes(review.id, 'up')"
+                class="mx-2"
+                icon
+                x-large
+                :color="review.voted == 'up' ? '#dd294a' : 'primary'"
+              >
                 <v-icon class="icon-large"> mdi-arrow-up-drop-circle </v-icon>
               </v-btn>
-              <h4 class="align-center">0</h4>
-              <v-btn class="mx-2" icon x-large color="primary">
+              <h4 class="align-center">{{ review.und_score }}</h4>
+              <v-btn
+                @click="updateVotes(review.id)"
+                class="mx-2"
+                icon
+                x-large
+                :color="review.voted == 'down' ? '#dd294a' : 'primary'"
+              >
                 <v-icon class="icon-large"> mdi-arrow-down-drop-circle </v-icon>
               </v-btn>
             </v-col>
@@ -153,6 +166,16 @@
 import Navigation from "@/components/Navigation";
 import { mapActions } from "vuex";
 
+function compare(a, b) {
+  if (a.und_score < b.und_score) {
+    return 1;
+  }
+  if (a.und_score > b.und_score) {
+    return -1;
+  }
+  return 0;
+}
+
 export default {
   data() {
     return {
@@ -179,6 +202,8 @@ export default {
       searchResults: "search/instructorSearch",
       fetchInstructorReviews: "instructor/fetchInstructorReviews",
       postInstructorReviews: "instructor/postInstructorReviews",
+      updateVotesAPI: "instructor/updateVotes",
+      getInstructorReviewVotes: "instructor/getInstructorReviewVotes"
     }),
     async queryInstructor(value) {
       await this.searchResults(value).then((response) => {
@@ -188,7 +213,19 @@ export default {
     },
     getInstructorReviews(value) {
       this.fetchInstructorReviews(value).then((response) => {
-        this.instructorReviews = response;
+        response.forEach(element => {
+          this.getInstructorReviewVotes({instructorReviewId: element.id}).then((r) => {
+            if (r.score === 1)
+              this.$set(element, 'voted', 'up')
+            else
+              this.$set(element, 'voted', 'down')
+          })
+        })
+        return response
+      }).then((data) => {
+        console.log(data)
+        this.instructorReviews = data
+        this.instructorReviews.sort( compare )
       });
     },
     submitReview() {
@@ -201,6 +238,11 @@ export default {
         };
       });
     },
+    updateVotes(id, type="down") {
+      this.updateVotesAPI({ id: id, type: type }).then(() => {
+        this.getInstructorReviews({ instructorID: this.instructor.id });
+      });
+    }
   },
 };
 </script>

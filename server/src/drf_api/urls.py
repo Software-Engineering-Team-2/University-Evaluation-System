@@ -25,6 +25,7 @@ urlpatterns = [
     path('get-instructor-rev', getInstructorReviews.as_view(), name='test-Instructor-Rev'),
     path('get-course-rev', getCourseReviews.as_view(), name='test-Course-Rev'),
     path('get-course-rev-votes', getCourseReviewVotes.as_view(), name='test-Course-Rev-votes'),
+    path('get-course-rev-tags', getCourseReviewTags.as_view(), name='test-Course-Rev-tags'),
     path('get-instructor-rev-votes', getInstructorReviewVotes.as_view(), name='test-Course-Rev-votes'),
     path('get-instructor-rev-tags', getInstructorReviewTags.as_view(), name='test-Course-Rev-tags'),
 ]

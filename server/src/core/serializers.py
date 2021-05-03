@@ -53,9 +53,7 @@ class CourseReviewTagSerializer(serializers.ModelSerializer):
 class CourseTagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course_Tag
-        fields = (
-            'name'
-        )
+        fields = '__all__'
 
 class instructorTagSerializer(serializers.ModelSerializer):
     class Meta:

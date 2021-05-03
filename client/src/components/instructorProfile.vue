@@ -222,7 +222,6 @@ export default {
         })
         return response
       }).then((data) => {
-        console.log(data)
         this.instructorReviews = data
         this.instructorReviews.sort( compare )
       });
@@ -231,7 +230,6 @@ export default {
       this.postInstructorReviews({review: this.review, tags: this.select}).then(() => {
         this.$set(this.review, 'tags', this.select)
         this.$set(this.review, 'und_score', 0)
-        console.log(this.review)
         this.instructorReviews.push(this.review);
         this.review = {
           instructorID: null,

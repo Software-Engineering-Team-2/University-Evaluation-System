@@ -82,12 +82,7 @@
             >
               <h4>Tags</h4>
               <v-chip-group active-class="primary--text" column>
-                <v-chip small color="primary"> hardworking </v-chip>
-                <v-chip small color="primary"> test </v-chip
-                ><v-chip small color="primary"> stupid </v-chip
-                ><v-chip small color="primary"> bad grader </v-chip
-                ><v-chip small color="primary"> tough </v-chip
-                ><v-chip small color="primary"> hard </v-chip>
+                <v-chip v-for="tag in review.tags" :key="tag" small color="primary"> {{ tag }} </v-chip>
               </v-chip-group>
             </v-col>
           </v-row>
@@ -175,7 +170,7 @@ export default {
     return {
       course: null,
       courseReviews: [],
-      select: ["add-tags-with", "enter", "tab", "paste"],
+      select: [],
       review: {
         courseSemesterID: null,
         rating: null,
@@ -188,7 +183,6 @@ export default {
     Navigation,
   },
   created() {
-    // console.log(this.$route.params)
     this.queryCourse({ id: this.$route.params.id }).then(() => {
       this.getCourseReviews({ courseSemesterID: this.course.id });
     });
@@ -199,7 +193,8 @@ export default {
       fetchCourseReviews: "courses/fetchCourseReviews",
       postCourseReviews: "courses/postCourseReviews",
       updateVotesAPI: "courses/updateVotes",
-      getCourseReviewVotes: "courses/getCourseReviewVotes"
+      getCourseReviewVotes: "courses/getCourseReviewVotes",
+      getCourseReviewTags: 'courses/getCourseReviewTags'
     }),
     async queryCourse(value) {
       await this.searchResults(value).then((response) => {
@@ -216,6 +211,9 @@ export default {
             else
               this.$set(element, 'voted', 'down')
           })
+          this.getCourseReviewTags({courseReviewId: element.id}).then((r) => {
+            this.$set(element, 'tags', r)
+          })
         })
         return response
       }).then((data) => {
@@ -224,13 +222,16 @@ export default {
       });
     },
     submitReview() {
-      this.postCourseReviews(this.review).then(() => {
+      this.postCourseReviews({review: this.review, tags: this.select}).then(() => {
+        this.$set(this.review, 'tags', this.select)
+        this.$set(this.review, 'und_score', 0)
         this.courseReviews.push(this.review);
         this.review = {
           courseSemesterID: null,
           rating: null,
           comments: null,
         };
+        this.select = []
       });
     },
     updateVotes(id, type="down") {

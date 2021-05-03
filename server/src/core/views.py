@@ -3,10 +3,8 @@ from django.http import JsonResponse # Abbas: Is this being used?
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from .serializers import *
 from .models import *
-
 from django_und.models import Vote
 
 
@@ -193,5 +191,32 @@ class getInstructorReviewTags(APIView):
                 new_tag = Instructor_Tag(name=tag.lower())
                 new_tag.save()
                 review_tag = Instructor_Review_Tag(instructorReviewID=instructorReview, tagID=new_tag)
+                review_tag.save()
+        return Response(status=200)
+
+class getCourseReviewTags(APIView):
+
+    def post(self, request, *args, **kwargs):
+        if ('courseReviewId' in request.data):
+            courseReviewTag = Course_Review_Tag.objects.all().filter(courseReviewID=request.data['courseReviewId'])
+            tags = []
+            for i in courseReviewTag:
+                tags.append(CourseTagSerializer(i.tagID).data['name'])
+            return Response(tags, status=200)
+        else:
+            courseTags = Course_Tag.objects.all()
+            return Response(CourseTagSerializer(courseTags, many=True).data, status=200)
+    
+    def patch(self, request, *args, **kwargs):
+        courseReview = Course_Review.objects.get(id=request.data['reviewId'])
+        for tag in request.data['tags']:
+            try:
+                exact = Course_Tag.objects.get(name=tag.lower())
+                review_tag = Course_Review_Tag(courseReviewID=courseReview, tagID=exact)
+                review_tag.save()
+            except Course_Tag.DoesNotExist:
+                new_tag = Course_Tag(name=tag.lower())
+                new_tag.save()
+                review_tag = Course_Review_Tag(courseReviewID=courseReview, tagID=new_tag)
                 review_tag.save()
         return Response(status=200)

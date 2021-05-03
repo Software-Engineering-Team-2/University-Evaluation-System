@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.http import JsonResponse # Abbas: Is this being used?
-
+from django.contrib.contenttypes.models import ContentType
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -70,6 +70,16 @@ class getInstructorReviews(APIView):
             return Response(serializer.data)
         return Response(serializer.errors)
 
+    def patch(self, request, *args, **kwargs):
+        id = request.data['id']
+        instructorReview = Instructor_Review.objects.get(id=id)
+        if (request.data['type'] == "up"):
+            instructorReview.upvote(request.user)
+        else:
+            instructorReview.downvote(request.user)
+        serializer = InstructorReviewSerializer(instructorReview)
+        return Response(serializer.data)
+
 class getCourseReviews(APIView):
     
     def create_vote(self, course, user, vtype, val):
@@ -104,29 +114,6 @@ class getCourseReviews(APIView):
         serializer = CourseReviewSerializer(courseReview)
         return Response(serializer.data)
 
-    
-class getInstructorReviews(APIView):
-
-    def get(self, request, *args, **kwargs):
-        print("request.data:",request.data)
-        if('instructorID' in request.GET):
-            instructorID = request.GET['instructorID']
-            qs = Instructor_Review.objects.all().filter(instructorID__exact=instructorID)
-        else:
-            qs = Instructor_Review.objects.all()
-        serializer = InstructorReviewSerializer(qs, many=True)
-        return Response(serializer.data)
-
-    def post(self, request, *args, **kwargs):
-        print(request.data)
-        serializer = InstructorReviewSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        else:
-            return Response(serializer.errors)
-
-
 class CourseReviewTagView(APIView):
 
     def get(self, request, *args, **kwargs):
@@ -144,6 +131,7 @@ class CourseReviewTagView(APIView):
             return Response(serializer.data)
         else:
             return Response(serializer.errors)
+
 
 class InstructorReviewTagView(APIView):
 
@@ -167,7 +155,16 @@ class getCourseReviewVotes(APIView):
 
     def post(self, request, *args, **kwargs):
         try:
-            vote = Vote.objects.get(user=request.user, object_id=request.data['courseReviewId'])
+            vote = Vote.objects.get(user=request.user, object_id=request.data['courseReviewId'], content_type=ContentType.objects.get(model='course_review'))
+            return Response(VoteSerializer(vote).data)
+        except Vote.DoesNotExist:
+            return Response({}, status=400)
+
+class getInstructorReviewVotes(APIView):
+
+    def post(self, request, *args, **kwargs):
+        try:
+            vote = Vote.objects.get(user=request.user, object_id=request.data['instructorReviewId'], content_type=ContentType.objects.get(model='instructor_review'))
             return Response(VoteSerializer(vote).data)
         except Vote.DoesNotExist:
             return Response({}, status=400)

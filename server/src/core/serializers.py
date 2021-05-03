@@ -19,7 +19,7 @@ class InstructorReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructor_Review
         fields = (
-            'instructorID', 'rating', 'comments','verified','anonymous','timeStamp'
+            'id', 'instructorID', 'rating', 'comments','verified','anonymous','timeStamp', 'und_score'
         )
 
 class CourseReviewSerializer(serializers.ModelSerializer):
@@ -33,7 +33,7 @@ class VoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vote
         fields = (
-            'user', 'score', 'object_id' 
+            'user', 'score', 'object_id'
         )
         
 class InstructorReviewTagSerializer(serializers.ModelSerializer):

@@ -42,13 +42,13 @@ class Student(models.Model):
     Major = models.CharField(max_length=100)
     Minor = models.CharField(max_length=100)
 
-class Instructor_Review(models.Model):
+class Instructor_Review(VoteMixin, models.Model):
     # null is set to trutemporarily
     instructorID = models.ForeignKey(Instructor, on_delete=models.CASCADE, null=True)
     # studentID = models.ForeignKey(Student, on_delete=models.CASCADE, null=True)
     #courseID = models.ForeignKey(Course, on_delete=models.CASCADE, null=True)
 
-    rating = models.PositiveSmallIntegerField(validators = [MaxValueValidator(5)])
+    rating = models.FloatField(validators = [MaxValueValidator(5)])
     comments = models.TextField() # Will Specify max_length maybe later..
     verified = models.BooleanField(default = False)
     anonymous = models.BooleanField(default = True)
@@ -71,7 +71,6 @@ class Course_Review(VoteMixin, models.Model):
     comments = models.TextField() # Will Specify max_length maybe later..
     verified = models.BooleanField(default = False)
     anonymous = models.BooleanField(default = True)
-    votes = models.IntegerField(default=0)
     timeStamp = models.DateTimeField(auto_now_add=True)
 
 class Course_Tag(models.Model):

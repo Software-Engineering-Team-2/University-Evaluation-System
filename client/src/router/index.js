@@ -19,7 +19,6 @@ const routes = [
     name: 'Dashboard',
     component: Dashboard,
     beforeEnter: (to, from, next) => {
-      console.log(store.getters['auth/isAuthenticated'])
       if (!store.getters['auth/isAuthenticated']) {
         return next({
           name: 'Login'

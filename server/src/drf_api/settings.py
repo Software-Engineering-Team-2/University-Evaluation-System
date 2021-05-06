@@ -165,7 +165,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 LOGIN_REDIRECT_URL='/'
 ACCOUNT_EMAIL_VERIFICATION='mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-LOGIN_URL = 'http://localhost:8080/'
+LOGIN_URL = 'http://localhost:8080/?success=1'
 
 #Following is added to enable registration with email instead of username
 AUTHENTICATION_BACKENDS = (

@@ -39,16 +39,19 @@ export default {
     actions: {
         async signIn({ commit, dispatch }, credentials) {
             commit('SET_LOADING_TRUE')
-            let response = await axios.post('/dj-rest-auth/login/', credentials).catch(error => {console.log(error)})
-            return dispatch('attempt', response.data.key)
+            let response = await axios.post('/dj-rest-auth/login/', credentials).catch(error => {
+                commit('SET_LOADING_FALSE')
+                return error.response
+            })
+            return dispatch('attempt', response.data)
         },
         async attempt ({ commit, state }, token) {
-            if (token) {
-                commit('SET_TOKEN', token)  
+            if (token['key']) {
+                commit('SET_TOKEN', token['key'])  
             }
 
             if (!state.token) {
-                return
+                return token
             }
 
             try {
@@ -68,10 +71,12 @@ export default {
         },
         register ({ commit }, data) {
             commit('SET_LOADING_TRUE')
-            return axios.post('/dj-rest-auth/registration/', data).then(() => {
+            return axios.post('/dj-rest-auth/registration/', data).then((response) => {
                 commit('SET_LOADING_FALSE')
-            }).catch(() => {
+                return response
+            }).catch(error => {
                 commit('SET_LOADING_FALSE')
+                return error.response
             })
         }
     }

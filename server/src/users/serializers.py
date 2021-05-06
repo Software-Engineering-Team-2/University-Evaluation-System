@@ -26,10 +26,13 @@ class CustomRegisterSerializer(RegisterSerializer):
 class CustomLoginSerializer(LoginSerializer):
     
     def validate_auth_user_status(self, user):
-        if not user.is_active or not user.verified:
+        if not user.is_active:
             msg = _('User account is disabled.')
             raise exceptions.ValidationError(msg)
-
+        elif not user.verified:
+            msg = _('Please wait for admin to approve your account.')
+            raise exceptions.ValidationError(msg)
+        
 class CustomUserDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:

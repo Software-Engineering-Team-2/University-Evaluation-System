@@ -8,7 +8,7 @@ from core.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('testView/', getCourses.as_view(), name="test"),
+    path('testView/', getInstructorReviews.as_view(), name="test"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
     path(

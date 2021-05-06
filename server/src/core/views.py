@@ -9,6 +9,12 @@ from django_und.models import Vote
 import time
 
 class getCourses(APIView):
+<<<<<<< Updated upstream
+=======
+
+    permission_classes = {IsAuthenticated, }
+    
+>>>>>>> Stashed changes
     def get(self, request, *args, **kwargs):
         if ('title' in request.GET):
             query = request.GET['title']
@@ -22,6 +28,8 @@ class getCourses(APIView):
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
+        if user.usertype != 'S':
+            return Response({'response':'Only Students are allowed to post this'})
         print(request.data)
         serializer = CourseSerializer(data=request.data)
         if serializer.is_valid():
@@ -31,6 +39,9 @@ class getCourses(APIView):
 
 
 class getInstructor(APIView):
+
+    permission_classes = {IsAuthenticated, }
+
     def get(self, request, *args, **kwargs):
         if ('name' in request.GET):
             query = request.GET['name']
@@ -55,6 +66,8 @@ class getInstructor(APIView):
 
 class getInstructorReviews(APIView):
 
+    permission_classes = {IsAuthenticated, }
+
     def get(self, request, *args, **kwargs):
         instructorID = request.GET['instructorID']
         qs = Instructor_Review.objects.all().filter(instructorID__exact=instructorID)
@@ -62,6 +75,10 @@ class getInstructorReviews(APIView):
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
+        user = request.user
+        if user.usertype != 'S':
+            return Response({'response':'Only Students are allowed to post this'})
+
         serializer = InstructorReviewSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -80,7 +97,12 @@ class getInstructorReviews(APIView):
 
 class getCourseReviews(APIView):
     
+    permission_classes = {IsAuthenticated, }
+
     def create_vote(self, course, user, vtype, val):
+        if user.usertype != 'S':
+            return Response({'response':'Only Students are allowed to vote'})
+
         vote = Vote(courseReviewID=course, userID=user, voteType=vtype)
         if vtype == "U":
             course.votes += val
@@ -96,6 +118,8 @@ class getCourseReviews(APIView):
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
+        if user.usertype != 'S':
+            return Response({'response':'Only Students are allowed to post this'})
         serializer = CourseReviewSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -151,6 +175,8 @@ class InstructorReviewTagView(APIView):
 
 class getCourseReviewVotes(APIView):
 
+    permission_classes = {IsAuthenticated, }
+
     def post(self, request, *args, **kwargs):
         try:
             vote = Vote.objects.get(user=request.user, object_id=request.data['courseReviewId'], content_type=ContentType.objects.get(model='course_review'))
@@ -159,6 +185,8 @@ class getCourseReviewVotes(APIView):
             return Response({}, status=200)
 
 class getInstructorReviewVotes(APIView):
+
+    permission_classes = {IsAuthenticated, }
 
     def post(self, request, *args, **kwargs):
         try:

@@ -159,7 +159,7 @@
 
 <script>
 import Navigation from "@/components/Navigation";
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 
 function compare(a, b) {
   if (a.und_score < b.und_score) {
@@ -188,6 +188,7 @@ export default {
     Navigation,
   },
   created() {
+    this.setLoadingTrue()
     this.queryInstructor({ id: this.$route.params.id }).then(() => {
       this.getInstructorReviews({ instructorID: this.instructor.id });
     });
@@ -201,6 +202,10 @@ export default {
       getInstructorReviewVotes: "instructor/getInstructorReviewVotes",
       getInstructorReviewTags: 'instructor/getInstructorReviewTags'
     }),
+    ...mapMutations({
+      setLoadingFalse: 'auth/SET_LOADING_FALSE',
+      setLoadingTrue: 'auth/SET_LOADING_TRUE',
+    }),
     async queryInstructor(value) {
       await this.searchResults(value).then((response) => {
         this.instructor = response[0];
@@ -208,25 +213,27 @@ export default {
       });
     },
     getInstructorReviews(value) {
-      this.fetchInstructorReviews(value).then((response) => {
-        response.forEach(element => {
-          this.getInstructorReviewVotes({instructorReviewId: element.id}).then((r) => {
+      this.fetchInstructorReviews(value).then(async (response) => {
+        for (let element of response) {
+          await this.getInstructorReviewVotes({instructorReviewId: element.id}).then((r) => {
             if (r.score === 1)
               this.$set(element, 'voted', 'up')
             else
               this.$set(element, 'voted', 'down')
           })
-          this.getInstructorReviewTags({instructorReviewId: element.id}).then((r) => {
+          await this.getInstructorReviewTags({instructorReviewId: element.id}).then((r) => {
             this.$set(element, 'tags', r)
           })
-        })
+        }
         return response
       }).then((data) => {
         this.instructorReviews = data
         this.instructorReviews.sort( compare )
+        this.setLoadingFalse()
       });
     },
     submitReview() {
+      this.setLoadingTrue()
       this.postInstructorReviews({review: this.review, tags: this.select}).then(() => {
         this.$set(this.review, 'tags', this.select)
         this.$set(this.review, 'und_score', 0)
@@ -237,9 +244,11 @@ export default {
           comments: null,
         };
         this.select = []
+        this.setLoadingFalse()
       });
     },
     updateVotes(id, type="down") {
+      this.setLoadingTrue()
       this.updateVotesAPI({ id: id, type: type }).then(() => {
         this.getInstructorReviews({ instructorID: this.instructor.id });
       });

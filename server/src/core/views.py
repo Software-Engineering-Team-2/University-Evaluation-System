@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from .serializers import *
 from .models import *
 from django_und.models import Vote
-
+import time
 
 class getCourses(APIView):
     def get(self, request, *args, **kwargs):
@@ -156,7 +156,7 @@ class getCourseReviewVotes(APIView):
             vote = Vote.objects.get(user=request.user, object_id=request.data['courseReviewId'], content_type=ContentType.objects.get(model='course_review'))
             return Response(VoteSerializer(vote).data)
         except Vote.DoesNotExist:
-            return Response({}, status=400)
+            return Response({}, status=200)
 
 class getInstructorReviewVotes(APIView):
 
@@ -165,7 +165,7 @@ class getInstructorReviewVotes(APIView):
             vote = Vote.objects.get(user=request.user, object_id=request.data['instructorReviewId'], content_type=ContentType.objects.get(model='instructor_review'))
             return Response(VoteSerializer(vote).data)
         except Vote.DoesNotExist:
-            return Response({}, status=400)
+            return Response({}, status=200)
 
 class getInstructorReviewTags(APIView):
 

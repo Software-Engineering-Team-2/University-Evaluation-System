@@ -1,10 +1,20 @@
 <template>
   <div id="app">
     <v-app>
+      <pageLoader />
       <router-view :key="$route.path"/>
     </v-app>
   </div>
 </template>
+
+<script>
+import pageLoader from './components/pageLoader'
+export default {
+  components: {
+    pageLoader
+  }
+}
+</script>
 
 <style lang="scss">
 .v-application--wrap {
@@ -17,10 +27,8 @@
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  width: 100%;
-  height: 100%;
-  // min-height: 100%;
-  // min-width: 1300px;
+  min-width: 100vh;
+  min-height: 100vh;
 }
 
 #nav {

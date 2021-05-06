@@ -153,7 +153,7 @@
 
 <script>
 import Navigation from "@/components/Navigation";
-import { mapActions } from "vuex";
+import { mapActions, mapMutations } from "vuex";
 
 function compare(a, b) {
   if (a.und_score < b.und_score) {
@@ -183,10 +183,11 @@ export default {
     Navigation,
   },
   created() {
+    this.setLoadingTrue()
     this.queryCourse({ id: this.$route.params.id }).then(() => {
       this.getCourseReviews({ courseSemesterID: this.course.id });
     });
-  },
+},
   methods: {
     ...mapActions({
       searchResults: "search/courseSearch",
@@ -196,6 +197,10 @@ export default {
       getCourseReviewVotes: "courses/getCourseReviewVotes",
       getCourseReviewTags: 'courses/getCourseReviewTags'
     }),
+    ...mapMutations({
+      setLoadingFalse: 'auth/SET_LOADING_FALSE',
+      setLoadingTrue: 'auth/SET_LOADING_TRUE',
+    }),
     async queryCourse(value) {
       await this.searchResults(value).then((response) => {
         this.course = response[0];
@@ -203,25 +208,28 @@ export default {
       });
     },
     getCourseReviews(value) {
-      this.fetchCourseReviews(value).then((response) => {
-        response.forEach(element => {
-          this.getCourseReviewVotes({courseReviewId: element.id}).then((r) => {
+      this.fetchCourseReviews(value).then(async (response) => {
+        for (let element of response) {
+          await this.getCourseReviewVotes({courseReviewId: element.id}).then((r) => {
             if (r.score === 1)
               this.$set(element, 'voted', 'up')
             else
               this.$set(element, 'voted', 'down')
           })
-          this.getCourseReviewTags({courseReviewId: element.id}).then((r) => {
+          await this.getCourseReviewTags({courseReviewId: element.id}).then((r) => {
             this.$set(element, 'tags', r)
           })
-        })
+        }
+        
         return response
       }).then((data) => {
         this.courseReviews = data
         this.courseReviews.sort( compare )
+        this.setLoadingFalse()
       });
     },
     submitReview() {
+      this.setLoadingTrue()
       this.postCourseReviews({review: this.review, tags: this.select}).then(() => {
         this.$set(this.review, 'tags', this.select)
         this.$set(this.review, 'und_score', 0)
@@ -232,9 +240,11 @@ export default {
           comments: null,
         };
         this.select = []
+        this.setLoadingFalse()
       });
     },
     updateVotes(id, type="down") {
+      this.setLoadingTrue()
       this.updateVotesAPI({ id: id, type: type }).then(() => {
         this.getCourseReviews({ courseSemesterID: this.course.id });
       });

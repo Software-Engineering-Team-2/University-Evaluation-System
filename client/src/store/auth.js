@@ -5,6 +5,7 @@ export default {
     state: {
         token: null,
         user: null,
+        loading: null
     },
     getters: {
         isAuthenticated (state) {
@@ -12,6 +13,12 @@ export default {
         },
         returnUser (state) {
             return state.user
+        },
+        loadingStatus (state) {
+            if (state.loading != null)
+                return state.loading
+            else
+                return false
         }
     },
     mutations: {
@@ -20,10 +27,18 @@ export default {
         },
         SET_USER (state, user) {
             state.user = user
+            state.loading = false
+        },
+        SET_LOADING_TRUE (state) {
+            state.loading = true
+        },
+        SET_LOADING_FALSE (state) {
+            state.loading = false
         }
     },
     actions: {
-        async signIn({ dispatch }, credentials) {
+        async signIn({ commit, dispatch }, credentials) {
+            commit('SET_LOADING_TRUE')
             let response = await axios.post('/dj-rest-auth/login/', credentials).catch(error => {console.log(error)})
             return dispatch('attempt', response.data.key)
         },
@@ -45,16 +60,19 @@ export default {
             }
         },
         signOut ({ commit }) {
+            commit('SET_LOADING_TRUE')
             return axios.post('/dj-rest-auth/logout/').then(() => {
                 commit('SET_TOKEN', null)
                 commit('SET_USER', null)
             })
         },
-        register (_, data) {
-            console.log(data)
-            return axios.post('/dj-rest-auth/registration/', data).catch((e) => {
-                console.log(e)
-            })  
+        register ({ commit }, data) {
+            commit('SET_LOADING_TRUE')
+            return axios.post('/dj-rest-auth/registration/', data).then(() => {
+                commit('SET_LOADING_FALSE')
+            }).catch(() => {
+                commit('SET_LOADING_FALSE')
+            })
         }
     }
 }

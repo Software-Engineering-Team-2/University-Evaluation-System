@@ -3,18 +3,16 @@ from django.http import JsonResponse # Abbas: Is this being used?
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from .serializers import *
 from .models import *
 from django_und.models import Vote
 import time
 
 class getCourses(APIView):
-<<<<<<< Updated upstream
-=======
 
-    permission_classes = {IsAuthenticated, }
-    
->>>>>>> Stashed changes
+
+
     def get(self, request, *args, **kwargs):
         if ('title' in request.GET):
             query = request.GET['title']
@@ -28,8 +26,8 @@ class getCourses(APIView):
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
-        if user.usertype != 'S':
-            return Response({'response':'Only Students are allowed to post this'})
+        if request.user.usertype != 'S':
+            return Response({'response':'Only Students are allowed to vote'},status=400)
         print(request.data)
         serializer = CourseSerializer(data=request.data)
         if serializer.is_valid():
@@ -77,7 +75,7 @@ class getInstructorReviews(APIView):
     def post(self, request, *args, **kwargs):
         user = request.user
         if user.usertype != 'S':
-            return Response({'response':'Only Students are allowed to post this'})
+            return Response({'response':'Only Students are allowed to vote'},status=400)
 
         serializer = InstructorReviewSerializer(data=request.data)
         if serializer.is_valid():
@@ -101,7 +99,7 @@ class getCourseReviews(APIView):
 
     def create_vote(self, course, user, vtype, val):
         if user.usertype != 'S':
-            return Response({'response':'Only Students are allowed to vote'})
+            return Response({'response':'Only Students are allowed to vote'},status=400)
 
         vote = Vote(courseReviewID=course, userID=user, voteType=vtype)
         if vtype == "U":
@@ -119,7 +117,7 @@ class getCourseReviews(APIView):
 
     def post(self, request, *args, **kwargs):
         if user.usertype != 'S':
-            return Response({'response':'Only Students are allowed to post this'})
+            return Response({'response':'Only Students are allowed to vote'},status=400)
         serializer = CourseReviewSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()

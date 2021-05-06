@@ -3,15 +3,12 @@ from django.http import JsonResponse # Abbas: Is this being used?
 from django.contrib.contenttypes.models import ContentType
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
 from .serializers import *
 from .models import *
 from django_und.models import Vote
 import time
 
 class getCourses(APIView):
-
-    permission_classes = {IsAuthenticated, }
     def get(self, request, *args, **kwargs):
         if ('title' in request.GET):
             query = request.GET['title']

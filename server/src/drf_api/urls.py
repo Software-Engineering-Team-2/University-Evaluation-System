@@ -2,12 +2,13 @@ from django.contrib import admin
 from django.urls import path, re_path
 from django.urls import include, path
 from rest_auth.registration.views import VerifyEmailView, RegisterView
+from rest_framework.authtoken.views import obtain_auth_token
 from allauth.account.views import ConfirmEmailView
 from core.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('testView/', InstructorReviewTagView.as_view(), name="InstructorReviewTagView"),
+    path('testView/', getCourses.as_view(), name="test"),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('dj-rest-auth/', include('dj_rest_auth.urls')),
     path(
@@ -28,4 +29,5 @@ urlpatterns = [
     path('get-course-rev-tags', getCourseReviewTags.as_view(), name='test-Course-Rev-tags'),
     path('get-instructor-rev-votes', getInstructorReviewVotes.as_view(), name='test-Course-Rev-votes'),
     path('get-instructor-rev-tags', getInstructorReviewTags.as_view(), name='test-Course-Rev-tags'),
+    path('api/token', obtain_auth_token, name = 'obtain_token' )
 ]

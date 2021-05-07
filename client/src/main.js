@@ -8,7 +8,7 @@ Vue.config.productionTip = false
 
 require('@/store/subscriber')
 
-store.dispatch('auth/attempt', localStorage.getItem('token')).then(
+store.dispatch('auth/attempt', {key: localStorage.getItem('token')}).then(
   new Vue({
     vuetify,
     store,

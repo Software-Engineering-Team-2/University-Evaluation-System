@@ -63,7 +63,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',  
-    'django.middleware.common.CommonMiddleware'
+    'django.middleware.common.CommonMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'drf_api.urls'
@@ -92,14 +93,14 @@ WSGI_APPLICATION = 'drf_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.postgresql',
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # 'NAME': 'd1pbh9mvf6fq2p',
-        # 'HOST': 'ec2-23-22-191-232.compute-1.amazonaws.com',
-        # 'PORT': 5432,
-        # 'USER': 'asfvskyyainetl',
-        # 'PASSWORD': '7ca0b3e703f7dc53981322f4ba47010c64cd3be16f8b316f176d368d39c65c37'
+        'ENGINE': 'django.db.backends.postgresql',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': 'db07g58b9k8otd',
+        'HOST': 'ec2-23-22-191-232.compute-1.amazonaws.com',
+        'PORT': 5432,
+        'USER': 'kddbrjivowdwxe',
+        'PASSWORD': 'beea10a5323d6bc6c40b3f8e13b5e1d194be4b4a17a45d191ad0982d2d551d50'
     }
 }
 
@@ -153,11 +154,13 @@ CORS_ORIGIN_REGEX_WHITELIST = [
     'http://localhost:3030',
 ]
 
-#This is required otherwise it asks for email server
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-# ACCOUNT_EMAIL_REQUIRED = True
-# AUTHENTICATION_METHOD = 'EMAIL'
-# ACCOUNT_EMAIL_VERIFICATION = 'optional'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'huevaluationsystem@gmail.com'
+EMAIL_HOST_PASSWORD = 'yguwjcwdnlvorojs' #past the key or password app here
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'HU Evaluation System'
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True   
@@ -165,7 +168,8 @@ ACCOUNT_USERNAME_REQUIRED = False
 LOGIN_REDIRECT_URL='/'
 ACCOUNT_EMAIL_VERIFICATION='mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
-LOGIN_URL = 'http://localhost:8080/?success=1'
+# LOGIN_URL = 'http://localhost:8080/?success=1'
+LOGIN_URL = 'https://husystem.herokuapp.com/?success=1'
 
 #Following is added to enable registration with email instead of username
 AUTHENTICATION_BACKENDS = (

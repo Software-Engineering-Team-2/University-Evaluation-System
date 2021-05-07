@@ -16,7 +16,7 @@ class getCourses(APIView):
     def get(self, request, *args, **kwargs):
         if ('title' in request.GET):
             query = request.GET['title']
-            qs = Course.objects.all().filter(title__contains=query)
+            qs = Course.objects.all().filter(title__icontains=query)
         elif ('id' in request.GET):
             query = request.GET['id']
             qs = Course.objects.all().filter(id=query)
@@ -43,7 +43,7 @@ class getInstructor(APIView):
     def get(self, request, *args, **kwargs):
         if ('name' in request.GET):
             query = request.GET['name']
-            qs = Instructor.objects.all().filter(name__contains=query)
+            qs = Instructor.objects.all().filter(name__icontains=query)
         elif ('id' in request.GET):
             query = request.GET['id']
             qs = Instructor.objects.all().filter(id=query)
@@ -116,7 +116,7 @@ class getCourseReviews(APIView):
         return Response(serializer.data)
 
     def post(self, request, *args, **kwargs):
-        if user.usertype != 'S':
+        if request.user.usertype != 'S':
             return Response({'response':'Only Students are allowed to vote'},status=400)
         serializer = CourseReviewSerializer(data=request.data)
         if serializer.is_valid():

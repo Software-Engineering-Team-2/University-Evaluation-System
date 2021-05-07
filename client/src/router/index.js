@@ -4,6 +4,7 @@ import Login from '@/components/HelloWorld'
 import Dashboard from '@/components/Dashboard'
 import courseProfile from '@/components/courseProfile'
 import instructorProfile from '@/components/instructorProfile'
+import pageNotFound from '@/components/pageNotFound'
 import store from '@/store'
 
 Vue.use(VueRouter)
@@ -12,7 +13,15 @@ const routes = [
   {
     path: '/',
     name: 'Login',
-    component: Login
+    component: Login,
+    beforeEnter: (to, from, next) => {
+      if (store.getters['auth/isAuthenticated']) {
+        return next({
+          name: 'Dashboard'
+        })
+      }
+      next()
+    },
   },
   {
     path: '/dashboard',
@@ -30,13 +39,33 @@ const routes = [
   {
     path: '/course/:id',
     name: 'Course',
-    component: courseProfile
+    component: courseProfile,
+    beforeEnter: (to, from, next) => {
+      if (!store.getters['auth/isAuthenticated']) {
+        return next({
+          name: 'Login'
+        })
+      }
+      next()
+    }, 
   },
   {
     path: '/instructor/:id',
     name: 'Instructor',
-    component: instructorProfile
+    component: instructorProfile,
+    beforeEnter: (to, from, next) => {
+      if (!store.getters['auth/isAuthenticated']) {
+        return next({
+          name: 'Login'
+        })
+      }
+      next()
+    },
   },
+  {
+    path: '*',
+    component: pageNotFound
+  }
 ]
 
 const router = new VueRouter({

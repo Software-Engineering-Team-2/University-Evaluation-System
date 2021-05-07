@@ -6,8 +6,8 @@ import courses from './courses'
 import instructor from './instructor'
 import axios from 'axios'
 
-// axios.defaults.baseURL = 'https://husystem.herokuapp.com/';
-axios.defaults.baseURL = 'http://127.0.0.1:8000/';
+axios.defaults.baseURL = 'https://husystem.herokuapp.com/';
+// axios.defaults.baseURL = 'http://127.0.0.1:8000/';
 
 Vue.use(Vuex)
 Vue.config.devtools = true

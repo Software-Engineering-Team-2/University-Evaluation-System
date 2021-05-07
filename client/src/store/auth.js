@@ -5,7 +5,8 @@ export default {
     state: {
         token: null,
         user: null,
-        loading: null
+        loading: null,
+        userLoading: null
     },
     getters: {
         isAuthenticated (state) {
@@ -15,8 +16,8 @@ export default {
             return state.user
         },
         loadingStatus (state) {
-            if (state.loading != null)
-                return state.loading
+            if (state.loading != null || state.userLoading != null)
+                return state.loading || state.userLoading
             else
                 return false
         }
@@ -27,13 +28,19 @@ export default {
         },
         SET_USER (state, user) {
             state.user = user
-            state.loading = false
+            state.userLoading = false
         },
         SET_LOADING_TRUE (state) {
             state.loading = true
         },
         SET_LOADING_FALSE (state) {
             state.loading = false
+        },
+        SET_USER_LOADING_TRUE (state) {
+            state.userLoading = true
+        },
+        SET_USER_LOADING_FALSE (state) {
+            state.userLoading = false
         }
     },
     actions: {
@@ -46,20 +53,25 @@ export default {
             return dispatch('attempt', response.data)
         },
         async attempt ({ commit, state }, token) {
+            commit('SET_USER_LOADING_TRUE')
             if (token['key']) {
                 commit('SET_TOKEN', token['key'])  
             }
 
             if (!state.token) {
+                commit('SET_LOADING_FALSE')
+                commit('SET_USER_LOADING_FALSE')
                 return token
             }
 
             try {
                 let response = await axios.get('/dj-rest-auth/user/')
                 commit('SET_USER', response.data)
+                commit('SET_LOADING_FALSE')
             } catch (e) {
                 commit('SET_TOKEN', null)
                 commit('SET_USER', null)
+                commit('SET_LOADING_FALSE')
             }
         },
         signOut ({ commit }) {
@@ -67,6 +79,7 @@ export default {
             return axios.post('/dj-rest-auth/logout/').then(() => {
                 commit('SET_TOKEN', null)
                 commit('SET_USER', null)
+                commit('SET_LOADING_FALSE')
             })
         },
         register ({ commit }, data) {

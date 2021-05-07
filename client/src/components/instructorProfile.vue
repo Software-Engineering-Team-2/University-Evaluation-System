@@ -88,68 +88,95 @@
             >
               <h4>Tags</h4>
               <v-chip-group active-class="primary--text" column>
-                <v-chip v-for="tag in review.tags" :key="tag" small color="primary"> {{ tag }} </v-chip>
+                <v-chip
+                  v-for="tag in review.tags"
+                  :key="tag"
+                  small
+                  color="primary"
+                >
+                  {{ tag }}
+                </v-chip>
               </v-chip-group>
+            </v-col>
+          </v-row>
+          <v-row v-if="instructorReviews.length == 0" class="h-100 justify-space-around align-center">
+            <v-col>
+              <v-toolbar-title v-if="this.$store.state.auth.user.usertype === 'S'"
+                >No reviews yet. Be the first one to rate this
+                instructor!</v-toolbar-title
+              >
+              <v-toolbar-title v-else
+                >No reviews yet!</v-toolbar-title
+              >
             </v-col>
           </v-row>
         </v-card-text>
         <!-- reviews all end -->
 
         <!-- add review  -->
-        <v-row
-          no-gutters
-          class="box-shadow justify-space-around pa-1 pt-2 pb-2 ma-0"
-        >
-          <v-col
-            cols="auto"
-            class="d-flex flex-column justify-center align-center"
+        <v-form ref="review" v-if="this.$store.state.auth.user.usertype === 'S'">
+          <v-row
+            no-gutters
+            class="box-shadow justify-space-around pa-1 pt-6 ma-0"
           >
-            <h5>Overall Rating</h5>
-            <v-rating
-              v-model="review.rating"
-              color="yellow darken-3"
-              background-color="grey darken-1"
-              half-increments
-              hover
-              clearable
-              dense
-            ></v-rating>
-          </v-col>
-          <v-col cols="4" class="mt-auto mb-auto">
-            <h5>Comments</h5>
-            <v-textarea
-              v-model="review.comments"
-              outlined
-              rows="2"
-              hide-details
-              flat
-            ></v-textarea>
-          </v-col>
-          <v-col cols="4" class="d-flex flex-column justify-center">
-            <h5>Add Tags</h5>
-
-            <v-combobox
-              multiple
-              v-model="select"
-              outlined
-              hide-details
-              chips
-              deletable-chips
-              append-icon
+            <v-col
+              cols="auto"
+              class="d-flex flex-column justify-center align-center"
             >
-              <template v-slot:selection="data">
-                <v-chip small color="primary">
-                  {{ data.item }}
-                </v-chip>
-              </template>
-            </v-combobox>
-          </v-col>
-          <v-col cols="auto d-flex justify-center align-center">
-            <v-btn @click="submitReview" dark small color="primary">
-              Submit
-            </v-btn>
-          </v-col>
-        </v-row>
+              <h5>Overall Rating</h5>
+              <v-input
+                class="flex-none"
+                :value="review.rating"
+                v-model="review.rating"
+                :rules="[(v) => !!v || 'Rating is required']"
+              >
+                <v-rating
+                  v-model="review.rating"
+                  color="yellow darken-3"
+                  background-color="grey darken-1"
+                  half-increments
+                  hover
+                  clearable
+                  dense
+                ></v-rating>
+              </v-input>
+            </v-col>
+            <v-col cols="4" class="mt-auto mb-auto">
+              <h5>Comments</h5>
+              <v-textarea
+                :rules="[(v) => !!v || 'Comments are required']"
+                v-model="review.comments"
+                outlined
+                rows="2"
+                flat
+              ></v-textarea>
+            </v-col>
+            <v-col cols="4" class="d-flex flex-column justify-center">
+              <h5>Add Tags</h5>
+
+              <v-combobox
+                multiple
+                v-model="select"
+                outlined
+                chips
+                deletable-chips
+                :rules="[(v) => v.length != 0 || 'Tags are required']"
+                append-icon
+              >
+                <template v-slot:selection="data">
+                  <v-chip small color="primary">
+                    {{ data.item }}
+                  </v-chip>
+                </template>
+              </v-combobox>
+            </v-col>
+            <v-col cols="auto d-flex justify-center align-center">
+              <v-btn @click="submitReview" dark small color="primary">
+                Submit
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-form>
         <!-- add review end -->
       </v-col>
       <!-- reviews end -->
@@ -188,7 +215,7 @@ export default {
     Navigation,
   },
   created() {
-    this.setLoadingTrue()
+    this.setLoadingTrue();
     this.queryInstructor({ id: this.$route.params.id }).then(() => {
       this.getInstructorReviews({ instructorID: this.instructor.id });
     });
@@ -200,11 +227,11 @@ export default {
       postInstructorReviews: "instructor/postInstructorReviews",
       updateVotesAPI: "instructor/updateVotes",
       getInstructorReviewVotes: "instructor/getInstructorReviewVotes",
-      getInstructorReviewTags: 'instructor/getInstructorReviewTags'
+      getInstructorReviewTags: "instructor/getInstructorReviewTags",
     }),
     ...mapMutations({
-      setLoadingFalse: 'auth/SET_LOADING_FALSE',
-      setLoadingTrue: 'auth/SET_LOADING_TRUE',
+      setLoadingFalse: "auth/SET_LOADING_FALSE",
+      setLoadingTrue: "auth/SET_LOADING_TRUE",
     }),
     async queryInstructor(value) {
       await this.searchResults(value).then((response) => {
@@ -213,46 +240,56 @@ export default {
       });
     },
     getInstructorReviews(value) {
-      this.fetchInstructorReviews(value).then(async (response) => {
-        for (let element of response) {
-          await this.getInstructorReviewVotes({instructorReviewId: element.id}).then((r) => {
-            if (r.score === 1)
-              this.$set(element, 'voted', 'up')
-            else
-              this.$set(element, 'voted', 'down')
-          })
-          await this.getInstructorReviewTags({instructorReviewId: element.id}).then((r) => {
-            this.$set(element, 'tags', r)
-          })
-        }
-        return response
-      }).then((data) => {
-        this.instructorReviews = data
-        this.instructorReviews.sort( compare )
-        this.setLoadingFalse()
-      });
+      this.fetchInstructorReviews(value)
+        .then(async (response) => {
+          for (let element of response) {
+            await this.getInstructorReviewVotes({
+              instructorReviewId: element.id,
+            }).then((r) => {
+              if (r.score === 1) this.$set(element, "voted", "up");
+              else if (r.score === -1) this.$set(element, "voted", "down");
+            });
+            await this.getInstructorReviewTags({
+              instructorReviewId: element.id,
+            }).then((r) => {
+              this.$set(element, "tags", r);
+            });
+          }
+          return response;
+        })
+        .then((data) => {
+          this.instructorReviews = data;
+          this.instructorReviews.sort(compare);
+          this.setLoadingFalse();
+        });
     },
     submitReview() {
-      this.setLoadingTrue()
-      this.postInstructorReviews({review: this.review, tags: this.select}).then(() => {
-        this.$set(this.review, 'tags', this.select)
-        this.$set(this.review, 'und_score', 0)
-        this.instructorReviews.push(this.review);
-        this.review = {
-          instructorID: null,
-          rating: null,
-          comments: null,
-        };
-        this.select = []
-        this.setLoadingFalse()
-      });
+      if (this.$refs.review.validate()) {
+        this.setLoadingTrue();
+        this.postInstructorReviews({
+          review: this.review,
+          tags: this.select,
+        }).then(() => {
+          this.$set(this.review, "tags", this.select);
+          this.$set(this.review, "und_score", 0);
+          this.instructorReviews.push(this.review);
+          this.review = {
+            instructorID: null,
+            rating: null,
+            comments: null,
+          };
+          this.select = [];
+          this.$refs.review.resetValidation()
+          this.setLoadingFalse();
+        });
+      }
     },
-    updateVotes(id, type="down") {
-      this.setLoadingTrue()
+    updateVotes(id, type = "down") {
+      this.setLoadingTrue();
       this.updateVotesAPI({ id: id, type: type }).then(() => {
         this.getInstructorReviews({ instructorID: this.instructor.id });
       });
-    }
+    },
   },
 };
 </script>
@@ -274,5 +311,9 @@ export default {
   left: 50%;
   transform: translateX(-50%) translateY(50%);
   bottom: 0px;
+}
+
+.flex-none {
+  flex: none !important;
 }
 </style>

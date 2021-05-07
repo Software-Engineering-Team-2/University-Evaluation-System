@@ -189,7 +189,7 @@ export default {
     success: null,
     emailRules: [
       (v) => !!v || "E-mail is required",
-      (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+      (v) => /.+@.+\.habib.edu.pk/.test(v) || "E-mail must be a valid HU email",
     ],
   }),
 

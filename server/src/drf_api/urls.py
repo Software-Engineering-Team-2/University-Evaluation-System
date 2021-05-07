@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, re_path
 from django.urls import include, path
+from django.conf.urls.static import static
+from drf_api import settings
 from rest_auth.registration.views import VerifyEmailView, RegisterView
 from rest_framework.authtoken.views import obtain_auth_token
 from allauth.account.views import ConfirmEmailView
@@ -31,3 +33,4 @@ urlpatterns = [
     path('get-instructor-rev-tags', getInstructorReviewTags.as_view(), name='test-Course-Rev-tags'),
     path('api/token', obtain_auth_token, name = 'obtain_token' )
 ]
+

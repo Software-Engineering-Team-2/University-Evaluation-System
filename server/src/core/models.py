@@ -33,6 +33,7 @@ class Instructor(models.Model):
     name = models.CharField(max_length=200)
     email = models.EmailField(max_length=200)
     description = models.TextField() # Will this be CharField or TextField is fine?
+    image = models.ImageField(blank=True, null=True)
     
 class Student(models.Model):
     name = models.CharField(max_length=200)

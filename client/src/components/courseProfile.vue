@@ -337,6 +337,8 @@ export default {
   min-height: calc(50vh - 72px);
   align-items: flex-end;
   color: white !important;
+  background-size: cover;
+  background-image: url("~@/assets/4.jpg");
 }
 
 .box-shadow {

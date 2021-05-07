@@ -13,7 +13,7 @@ class InstructorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Instructor
         fields = (
-            'id','name', 'email', 'description')
+            'id','name', 'email', 'description', 'image')
 
 class InstructorReviewSerializer(serializers.ModelSerializer):
     class Meta:

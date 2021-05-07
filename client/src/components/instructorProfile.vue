@@ -8,7 +8,7 @@
           <v-avatar size="150" class="margin-neg">
             <v-img
               class="outlined"
-              src="https://cdn.vuetifyjs.com/images/profiles/marcus.jpg"
+              :src="'https://husystem.herokuapp.com/static'+instructor.image"
             ></v-img>
           </v-avatar>
         </v-toolbar>
@@ -304,6 +304,8 @@ export default {
   min-height: calc(40vh - 72px);
   align-items: flex-end;
   color: white !important;
+  background-size: cover;
+  background-image: url("~@/assets/4.jpg");
 }
 
 .margin-neg {
